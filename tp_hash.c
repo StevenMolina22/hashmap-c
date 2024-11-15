@@ -1,32 +1,76 @@
-#include <stdio.h>
 #include "src/hash.h"
+#include "src/csv.h"
+#include "src/pokemon.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-int main() {
-    hash_t* hash = hash_crear(10);
-    char clave[] = "Clave";
-    char valor[] = "Valor";
+#define ERROR -1
 
-    size_t n = 1000;
+int obtener_opcion_usuario(void)
+{
+	printf("1. Buscar pokemon\n");
+	printf("2. Listar todos los pokemones\n");
+	printf("Ingrese una opcion: ");
 
-    // agregar
-    for (size_t i = 0; i < n; i++) {
-        char clavef[50], valorf[50];
-        snprintf(clavef, sizeof(clavef), "%s %zu", clave, i);
-        snprintf(valorf, sizeof(valorf), "%s %zu", valor, i);
-        hash_insertar(hash, clavef, valorf, NULL);
-    }
+	int opcion;
+	if (scanf("%d", &opcion) != 1) {
+		printf("Opcion invalida\n");
+		return ERROR;
+	}
+	return opcion;
+}
 
-    // buscar
-    for (size_t i = 0; i < n; i++) {
-        char clavef[50];
-        snprintf(clavef, sizeof(clavef), "%s %zu", clave, i);
-        char* valor = hash_buscar(hash, clavef);
-        if (!valor) {
-            printf("No encontrado\n");
-        } else {
-            printf("%s\n", valor);
-        }
+int main(int argc, char *argv[])
+{
+	// ----- ABRIR ARCHIVO -----
+	if (argc != 2) {
+		printf("Uso: %s <archivo.csv>\n", argv[0]);
+		return ERROR;
+	}
 
-    }
-    return 0;
+	struct archivo_csv *archivo = abrir_archivo_csv(argv[1], DELIMITADOR);
+	if (!archivo) {
+		printf("Archivo inexistente");
+		return ERROR;
+	}
+
+	// ----- CREAR POKEDEX -----
+	hash_t *pokedex = hash_crear(20);
+	if (!pokedex) {
+		printf("Error al crear el ABB\n");
+		cerrar_archivo_csv(archivo);
+		return ERROR;
+	}
+
+	// ----- ANADIR A POKEDEX -----
+	if (!agregar_pokemones(archivo, pokedex)) {
+		cerrar_archivo_csv(archivo);
+		hash_destruir_todo(pokedex, liberar_pokemon);
+		return ERROR;
+	}
+	cerrar_archivo_csv(archivo);
+
+	// ----- OPCION USUARIO -----
+	int opcion = obtener_opcion_usuario();
+	if (opcion == ERROR) {
+		hash_destruir_todo(pokedex, liberar_pokemon);
+		return ERROR;
+	}
+
+	switch (opcion) {
+	case 1:
+		buscar_pokemon(pokedex);
+		break;
+	case 2:
+		hash_iterar(pokedex, print_pokemon, NULL);
+		break;
+	default:
+		printf("Opcion invalida\n");
+		hash_destruir_todo(pokedex, liberar_pokemon);
+		return ERROR;
+	}
+
+	hash_destruir_todo(pokedex, liberar_pokemon);
+	return 0;
 }

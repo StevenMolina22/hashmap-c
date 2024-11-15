@@ -18,8 +18,6 @@ pruebas_lista: src/*.c pruebas_lista.c
 	$(CC) $(CFLAGS) src/*.c pruebas_lista.c -o pruebas_lista
 
 test: pruebas_alumno
-	# ./pruebas_vec
-	# ./pruebas_lista
 	./pruebas_alumno
 	rm -f pruebas_alumno
 
@@ -32,12 +30,12 @@ valgrind-ejemplo: ejemplo
 ejemplo: src/*.c ejemplo.c
 	$(CC) $(CFLAGS) src/*.c ejemplo.c -o ejemplo
 
-build: src/*.c tp_hash.c
-	$(CC) $(CFLAGS) src/*.c tp_hash.c -o tp_hash
+build: src/*.c tp_test.c
+	$(CC) $(CFLAGS) src/*.c tp_test.c -o tp_test
 
 run: build
-	./tp_hash
-	rm -f ./tp_hash
+	valgrind ./tp_test
+	rm -f ./tp_test
 
 clean:
 	rm -f pruebas_alumno ejemplo
