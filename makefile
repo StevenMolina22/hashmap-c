@@ -32,5 +32,12 @@ valgrind-ejemplo: ejemplo
 ejemplo: src/*.c ejemplo.c
 	$(CC) $(CFLAGS) src/*.c ejemplo.c -o ejemplo
 
+build: src/*.c tp_hash.c
+	$(CC) $(CFLAGS) src/*.c tp_hash.c -o tp_hash
+
+run: build
+	./tp_hash
+	rm -f ./tp_hash
+
 clean:
 	rm -f pruebas_alumno ejemplo
