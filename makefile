@@ -11,16 +11,6 @@ valgrind-alumno: pruebas_alumno
 pruebas_alumno: src/*.c pruebas_alumno.c
 	$(CC) $(CFLAGS) src/*.c pruebas_alumno.c -o pruebas_alumno
 
-pruebas_vec: src/*.c pruebas_vec.c
-	$(CC) $(CFLAGS) src/*.c pruebas_vec.c -o pruebas_vec
-
-pruebas_lista: src/*.c pruebas_lista.c
-	$(CC) $(CFLAGS) src/*.c pruebas_lista.c -o pruebas_lista
-
-test: pruebas_alumno
-	./pruebas_alumno
-	rm -f pruebas_alumno
-
 debug_pruebas: pruebas_alumno
 	gdb ./pruebas_alumno
 
@@ -30,12 +20,16 @@ valgrind-ejemplo: ejemplo
 ejemplo: src/*.c ejemplo.c
 	$(CC) $(CFLAGS) src/*.c ejemplo.c -o ejemplo
 
-build: src/*.c tp_test.c
-	$(CC) $(CFLAGS) src/*.c tp_test.c -o tp_test
+test: pruebas_alumno
+	@valgrind $(VALGRIND_FLAGS) ./pruebas_alumno
+	@rm -f ./pruebas_alumno
+
+build: src/*.c tp_hash.c
+	@$(CC) $(CFLAGS) src/*.c tp_hash.c -o tp_hash
 
 run: build
-	valgrind ./tp_test
-	rm -f ./tp_test
+	@valgrind ./tp_hash pokedex.csv
+	@rm -f ./tp_hash
 
 clean:
 	rm -f pruebas_alumno ejemplo

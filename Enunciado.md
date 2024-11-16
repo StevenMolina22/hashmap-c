@@ -36,10 +36,10 @@ En general para todo el código: utilice nombres claros de variables y funciones
 
 Explicá teóricamente los siguientes puntos (no necesariamente en orden, pero por favor usando diagramas):
 
-   - Qué es un diccionario
-    - Explicá 3 formas diferentes de implementar un diccionario (tabla de hash cuenta como 1)
-   - Qué es una función de hash y qué características debe tener para nuestro problema en particular
-   - Qué es una tabla de Hash y los diferentes métodos de resolución de colisiones vistos (encadenamiento, probing, etc)
-   - Explique por qué es importante el tamaño de la tabla (tanto para tablas abiertas como cerradas)
-     - Dado que en una tabla abierta se pueden encadenar colisiones sin importar el tamaño de la tabla, ¿Realmente importa el tamaño?
-   - Mas te vale que expliques con dibujos
+   - qué es un diccionario
+    - explicá 3 formas diferentes de implementar un diccionario (tabla de hash cuenta como 1)
+   - qué es una función de hash y qué características debe tener para nuestro problema en particular
+   - qué es una tabla de hash y los diferentes métodos de resolución de colisiones vistos (encadenamiento, probing, etc)
+   - explique por qué es importante el tamaño de la tabla (tanto para tablas abiertas como cerradas)
+     - dado que en una tabla abierta se pueden encadenar colisiones sin importar el tamaño de la tabla, ¿realmente importa el tamaño?
+   - mas te vale que expliques con dibujos

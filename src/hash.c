@@ -1,34 +1,7 @@
 #include "hash.h"
-#include <stdlib.h>
-#include <string.h>
+#include "tipos.h"
 
-typedef struct entrada {
-	char *clave;
-	void *valor;
-} entrada_t;
-
-typedef struct nodo {
-	entrada_t *entrada;
-	struct nodo *sig;
-	struct nodo *ant;
-} nodo_t;
-
-struct hash {
-	nodo_t **tabla;
-	size_t size;
-	size_t cap;
-};
-
-static size_t hasher(const char *str)
-{
-	size_t idx = 5381;
-	size_t c;
-
-	while ((c = (size_t)*str++)) {
-		idx = ((idx << 5) + idx) + c; // hash * 33 + c
-	}
-	return idx;
-}
+#define REHASH_FACTOR 0.75
 
 static nodo_t *nodo_crear(char *clave, void *valor)
 {
@@ -128,7 +101,7 @@ bool hash_insertar(hash_t *hash, char *_clave, void *valor, void **encontrado)
 {
 	if (!hash || !_clave)
 		return false;
-	if ((float)hash->size / (float)hash->cap > 0.75) {
+	if ((float)hash->size / (float)hash->cap > REHASH_FACTOR) {
 		if (!hash_rehash(hash))
 			return false;
 	}
@@ -140,6 +113,9 @@ bool hash_insertar(hash_t *hash, char *_clave, void *valor, void **encontrado)
 		nodo->entrada->valor = valor;
 		return true;
 	}
+
+	if (encontrado)
+		*encontrado = NULL;
 
 	char *clave = malloc(strlen(_clave) + 1);
 	if (!clave)

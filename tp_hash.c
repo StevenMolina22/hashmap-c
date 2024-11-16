@@ -23,7 +23,6 @@ int obtener_opcion_usuario(void)
 
 int main(int argc, char *argv[])
 {
-	// ----- ABRIR ARCHIVO -----
 	if (argc != 2) {
 		printf("Uso: %s <archivo.csv>\n", argv[0]);
 		return ERROR;
@@ -35,7 +34,6 @@ int main(int argc, char *argv[])
 		return ERROR;
 	}
 
-	// ----- CREAR POKEDEX -----
 	hash_t *pokedex = hash_crear(20);
 	if (!pokedex) {
 		printf("Error al crear el ABB\n");
@@ -43,7 +41,6 @@ int main(int argc, char *argv[])
 		return ERROR;
 	}
 
-	// ----- ANADIR A POKEDEX -----
 	if (!agregar_pokemones(archivo, pokedex)) {
 		cerrar_archivo_csv(archivo);
 		hash_destruir_todo(pokedex, liberar_pokemon);
@@ -51,7 +48,6 @@ int main(int argc, char *argv[])
 	}
 	cerrar_archivo_csv(archivo);
 
-	// ----- OPCION USUARIO -----
 	int opcion = obtener_opcion_usuario();
 	if (opcion == ERROR) {
 		hash_destruir_todo(pokedex, liberar_pokemon);
