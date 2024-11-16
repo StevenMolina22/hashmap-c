@@ -4,7 +4,7 @@
 
 # TDA HASH
 
-## Repositorio de (Nombre Apellido) - (Padrón) - (Mail)
+## Repositorio de (Marlon Stiven Molina Buitrago) - (112018) - (mmolinab@fi.uba.ar)
 
 - Para compilar:
 
@@ -25,22 +25,82 @@ valgrind ./tp_hash pokedex.csv
 ---
 ##  Funcionamiento
 
-Explicación de cómo funcionan las estructuras desarrolladas en el TP y el funcionamiento general del mismo.
-
 El TP Hash es un tipo de diccionario implementado con una tabla de Hash, para poder lograr una complejidad de buscueda constante.
 Para poder resolver las colisiones, se usa una tabla que guarda el primero de diferentes nodos enlazados, estos vienen conectados y se usan para la busqueda eficiente.
 
-Aclarar en esta parte todas las decisiones que se tomaron al realizar el TP, cosas que no se aclaren en el enunciado, fragmentos de código que necesiten explicación extra, etc.
+#### Diagramas de estructuras
+```mermaid
+classDiagram
+	class Entrada {
+		char* clave
+		void* valor
+	}
+	class Nodo {
+		Entrada* entrada
+		Nodo* siguiente
+		Nodo* anterior
+	}
+	class Hash {
+		Nodo** Tabla
+		size_t cantidad
+		size_t capacidad
+	}
+```
 
-Se decidio elegir por un array dinamico de nodos enlazados, ya que no es necesario insertar cada nodo al final, sino que puede ser hecho al inicio, para mas simpleza y con la misma complejidadde busqueda;
+#### Diagramas relacion estructuras
+```mermaid
+classDiagram
+    class TablaHash {
+        +Nodo[] tabla
+        +hasher(clave...)
+        +insertar(clave, valor...)
+        +obtener(clave...)
+        +eliminar(clave...)
+    }
 
-Incluir **EN TODOS LOS TPS** los diagramas relevantes al problema (mayormente diagramas de memoria para explicar las estructuras, pero se pueden utilizar otros diagramas si es necesario).
+    class Nodo {
+        +entrada: Entrada
+        +siguiente: Nodo
+        +anterior: Nodo
+    }
 
-<div align="center">
-<img width="80%" src="diagrama-memoria.png">
-</div>
+    class Entrada {
+        +clave
+        +valor
+    }
 
+    TablaHash "1" *-- "N" Nodo : contiene
+    Nodo "1" *-- "1" Entrada : contiene
+    Nodo "1" --> "1" Nodo : siguiente
+    Nodo "1" --> "1" Nodo : anterior
 
+    note for TablaHash "Arreglo de punteros a nodos,\ncada posición puede iniciar\nuna lista doblemente enlazada"
+    note for Nodo "Los enlaces dobles permiten\neliminación en O(1) cuando\nse tiene referencia al nodo"
+```
+
+#### Funcionamiento de tabla hash
+```mermaid
+graph LR
+    A1(ptr.) --> N1(entrada)
+    N1 <--> N2(entrada)
+    N2 <--> N3(entrada)
+    N3 --> null1[null]
+
+    A2(ptr.) --> N4(entrada)
+    N4 <--> N5(entrada)
+    N5 --> null2[null]
+
+    A3(ptr.) --> null3[null]
+
+    A4(ptr.) --> null4[null]
+
+    subgraph TablaArr
+        A1
+        A2
+        A3
+        A4
+    end
+```
 ### Por ejemplo:
 
 El programa funciona abriendo el archivo pasado como parámetro y leyendolo línea por línea. Por cada línea crea un registro e intenta agregarlo al vector. La función de lectura intenta leer todo el archivo o hasta encontrar el primer error. Devuelve un vector con todos los registros creados.
