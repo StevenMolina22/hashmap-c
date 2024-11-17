@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
 	hash_t *pokedex = hash_crear(20);
 	if (!pokedex) {
-		printf("Error al crear el ABB\n");
+		printf("Error al crear la pokedex\n");
 		cerrar_archivo_csv(archivo);
 		return ERROR;
 	}

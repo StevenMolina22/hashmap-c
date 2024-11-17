@@ -7,10 +7,10 @@ hash_t *hash_crear(size_t cap)
 {
 	hash_t *hash = malloc(sizeof(hash_t));
 	if (!hash)
-	   return NULL;
+		return NULL;
 	nodo_t **tabla = calloc(cap, sizeof(nodo_t *));
 	if (!tabla) {
-	    free(hash);
+		free(hash);
 		return NULL;
 	}
 	hash->tabla = tabla;
@@ -35,7 +35,7 @@ bool hash_insertar(hash_t *hash, char *_clave, void *valor, void **encontrado)
 			return false;
 	}
 
-	nodo_t *nodo = encontrar_entrada(hash, _clave);
+	nodo_t *nodo = encontrar_nodo(hash, _clave);
 	if (nodo) {
 		if (encontrado)
 			*encontrado = nodo->entrada->valor;
@@ -63,7 +63,7 @@ void *hash_buscar(hash_t *hash, char *clave)
 {
 	if (!hash || !clave)
 		return NULL;
-	nodo_t *nodo = encontrar_entrada(hash, clave);
+	nodo_t *nodo = encontrar_nodo(hash, clave);
 	if (!nodo)
 		return NULL;
 	return nodo->entrada->valor;
@@ -73,7 +73,7 @@ bool hash_contiene(hash_t *hash, char *clave)
 {
 	if (!hash || !clave)
 		return false;
-	return encontrar_entrada(hash, clave) != NULL;
+	return encontrar_nodo(hash, clave) != NULL;
 }
 
 void *hash_quitar(hash_t *hash, char *clave)
@@ -81,7 +81,7 @@ void *hash_quitar(hash_t *hash, char *clave)
 	if (!hash || !clave)
 		return NULL;
 	size_t idx = hasher(clave) % hash->cap;
-	nodo_t *nodo = encontrar_entrada(hash, clave);
+	nodo_t *nodo = encontrar_nodo(hash, clave);
 	if (!nodo)
 		return NULL;
 	if (nodo->ant) {

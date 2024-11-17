@@ -50,23 +50,21 @@ classDiagram
 #### Diagramas relación estructuras
 ```mermaid
 classDiagram
-    class TablaHash {
-        +Nodo[] tabla
-        +hasher(clave...)
-        +insertar(clave, valor...)
-        +obtener(clave...)
-        +eliminar(clave...)
+    class Hash {
+        nodo_t** tabla
+        size_t cantidad
+        size_t capacidad
     }
 
     class Nodo {
-        +entrada: Entrada
-        +siguiente: Nodo
-        +anterior: Nodo
+        entrada_t* entrada
+        nodo_t* siguiente
+        nodo_t* anterior
     }
 
     class Entrada {
-        +clave
-        +valor
+        char* clave
+        void* valor
     }
 
     TablaHash "1" *-- "N" Nodo : contiene
@@ -120,7 +118,7 @@ El programa está dividido en varios archivos, cada uno con responsabilidades es
 
 ### Funcionamiento del Programa
 
-#### 1. Función Principal Programa
+#### 1. Función Principal Programa (`tp_hash.c`)
 
 La función `main` en `tp_hash.c` es el punto de entrada del programa. Su flujo es el siguiente:
 
@@ -160,11 +158,16 @@ La función `main` en `tp_hash.c` es el punto de entrada del programa. Su flujo 
 - **dividir_string**: Divide una cadena en partes utilizando un separador.
 - **liberar_partes**: Libera la memoria asociada a las partes de una cadena dividida.
 
-#### 6. Tipos y Funciones Auxiliares (`tipos.c` y `tipos.h`)
+#### 6. Tipos y Funciones Auxiliares (`hash_utils.c` y `hash_utils.h`)
 
 - **hasher**: Función de hash para calcular el índice de una clave en la tabla hash.
+- **nodo_crear**: Crea una estructura nodo_t*
+- **nodo_destruir**: Destruye el nodo, la entrada y la clave
+- **encontrar_entrada**: Encuentra el nodo basado en la clave
+- **agregar_entrada**: Agrega un nodo entrada directamente a la tabla hash
+- **hash_rehash**: Rehash para aumentar la capacidad
 
-#### 7. Funciones de Utilidad (`utils.c` y `utils.h`)
+#### 7. Funciones de Utilidad IO(`io_utils.c` y `io_utils.h`)
 
 - **read_int**: Lee un entero de una cadena.
 - **read_string**: Lee una cadena y la copia en un nuevo espacio de memoria.
@@ -177,8 +180,6 @@ El programa mostrará un menú para que el usuario elija entre buscar un Pokémo
 ### Conclusión
 
 El programa `tp_hash` es una aplicación completa que utiliza una tabla hash para gestionar una base de datos de Pokémon. La estructura modular del código facilita su mantenimiento y expansión. Cada componente tiene una responsabilidad clara, lo que permite una fácil comprensión y modificación del código.
-
-En el archivo `sarasa.c` la función `funcion1` utiliza `realloc` para agrandar la zona de memoria utilizada para conquistar el mundo. El resultado de `realloc` lo guardo en una variable auxiliar para no perder el puntero original en caso de error:
 
 Una de las funciones más importantes en esta implementación de hash es la de `rehash` ya que es la que garantiza que el `hashmap` se pueda usar con cualquier número de pares clave-valor. Toma todas las entradas que hay en la tabla, las añade a una nueva y luego elimina la vieja. Esto garantiza la integridad de los índices dados por el hash y el correcto funcionamiento de la búsqueda de los valores por cada clave.
 
@@ -249,7 +250,7 @@ Una tabla de hash es una estructura de datos que utiliza una función de hash pa
 
 2. **Probing Lineal**: Si una posición está ocupada, se busca la siguiente posición libre en la tabla.
    - **Ventajas**: Simple de implementar.
-   - **Desventajas**: Puede causar clustering, donde muchas claves colisionan y se agrupan.
+   - **Desventajas**: Puede causar, quen muchas claves colisionen y se agrupen.
 
 3. **Probing Cuadrático**: Similar al probing lineal, pero la distancia entre las posiciones probadas aumenta cuadráticamente.
    - **Ventajas**: Reduce el clustering comparado con el probing lineal.
