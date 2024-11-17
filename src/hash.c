@@ -1,89 +1,18 @@
 #include "hash.h"
-#include "tipos.h"
+#include "hash_utils.h"
 
-#define REHASH_FACTOR 0.75
-
-static nodo_t *nodo_crear(char *clave, void *valor)
-{
-	nodo_t *nodo = malloc(sizeof(nodo_t));
-	entrada_t *entrada = malloc(sizeof(entrada_t));
-	if (!nodo || !entrada)
-		return NULL;
-	entrada->clave = clave;
-	entrada->valor = valor;
-	nodo->entrada = entrada;
-	nodo->sig = NULL;
-	nodo->ant = NULL;
-	return nodo;
-}
-
-static void nodo_destruir(nodo_t *nodo)
-{
-	free(nodo->entrada->clave);
-	free(nodo->entrada);
-	free(nodo);
-}
-
-static nodo_t *encontrar_entrada(hash_t *hash, char *clave)
-{
-	size_t idx = hasher(clave) % hash->cap;
-	nodo_t *actual = hash->tabla[idx];
-	while (actual) {
-		if (strcmp(actual->entrada->clave, clave) == 0) {
-			return actual;
-		}
-		actual = actual->sig;
-	}
-	return NULL;
-}
-
-static bool agregar_entrada(hash_t *hash, char *clave, void *valor)
-{
-	size_t idx = hasher(clave) % hash->cap;
-	nodo_t *nuevo = nodo_crear(clave, valor);
-	if (!nuevo)
-		return false;
-	nodo_t *nodo = hash->tabla[idx];
-	if (nodo) {
-		nuevo->sig = nodo;
-		nodo->ant = nuevo;
-	}
-	hash->tabla[idx] = nuevo;
-	return true;
-}
-
-static bool hash_rehash(hash_t *hash)
-{
-	hash->cap *= 2;
-	nodo_t **tabla_vieja = hash->tabla;
-	nodo_t **tabla = calloc(hash->cap, sizeof(nodo_t *));
-	if (!tabla)
-		return false;
-	hash->tabla = tabla;
-	hash->size = 0;
-	for (size_t i = 0; i < hash->cap / 2; i++) {
-		nodo_t *nodo = tabla_vieja[i];
-		while (nodo) {
-			nodo_t *siguiente = nodo->sig;
-			if (!agregar_entrada(hash, nodo->entrada->clave,
-					     nodo->entrada->valor))
-				return false;
-			free(nodo->entrada);
-			free(nodo);
-			nodo = siguiente;
-			hash->size++;
-		}
-	}
-	free(tabla_vieja);
-	return true;
-}
+#define FACTOR_REHASH 0.75
 
 hash_t *hash_crear(size_t cap)
 {
 	hash_t *hash = malloc(sizeof(hash_t));
+	if (!hash)
+	   return NULL;
 	nodo_t **tabla = calloc(cap, sizeof(nodo_t *));
-	if (!hash || !tabla)
+	if (!tabla) {
+	    free(hash);
 		return NULL;
+	}
 	hash->tabla = tabla;
 	hash->size = 0;
 	hash->cap = cap;
@@ -101,7 +30,7 @@ bool hash_insertar(hash_t *hash, char *_clave, void *valor, void **encontrado)
 {
 	if (!hash || !_clave)
 		return false;
-	if ((float)hash->size / (float)hash->cap > REHASH_FACTOR) {
+	if ((float)hash->size / (float)hash->cap > FACTOR_REHASH) {
 		if (!hash_rehash(hash))
 			return false;
 	}

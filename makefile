@@ -28,8 +28,13 @@ build: src/*.c tp_hash.c
 	@$(CC) $(CFLAGS) src/*.c tp_hash.c -o tp_hash
 
 run: build
+	./tp_hash pokedex.csv
+	@rm -f ./tp_hash
+
+valgrind-run:
 	@valgrind ./tp_hash pokedex.csv
 	@rm -f ./tp_hash
+
 
 clean:
 	rm -f pruebas_alumno ejemplo

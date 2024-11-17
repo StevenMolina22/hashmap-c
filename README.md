@@ -15,18 +15,18 @@ make build
 - Para ejecutar:
 
 ```bash
-./tp_hash pokedex.csv
+make run
 ```
 
 - Para ejecutar con valgrind:
 ```bash
-valgrind ./tp_hash pokedex.csv
+make valgrind-run
 ```
 ---
 ##  Funcionamiento
 
-El TP Hash es un tipo de diccionario implementado con una tabla de Hash, para poder lograr una complejidad de buscueda constante.
-Para poder resolver las colisiones, se usa una tabla que guarda el primero de diferentes nodos enlazados, estos vienen conectados y se usan para la busqueda eficiente.
+El TP Hash es un tipo de diccionario implementado con una tabla de Hash, para poder lograr una complejidad de búsqueda constante.
+Para poder resolver las colisiones, se usa una tabla que guarda el primero de diferentes nodos enlazados, estos vienen conectados y se usan para la búsqueda eficiente.
 
 #### Diagramas de estructuras
 ```mermaid
@@ -47,7 +47,7 @@ classDiagram
 	}
 ```
 
-#### Diagramas relacion estructuras
+#### Diagramas relación estructuras
 ```mermaid
 classDiagram
     class TablaHash {
@@ -103,7 +103,7 @@ graph LR
 ```
 ### Por ejemplo:
 
-El programa funciona abriendo el archivo pasado como parámetro y leyendolo línea por línea. Por cada línea crea un registro e intenta agregarlo al vector. La función de lectura intenta leer todo el archivo o hasta encontrar el primer error. Devuelve un vector con todos los registros creados.
+El programa funciona abriendo el archivo pasado como parámetro y leyéndolo línea por línea. Por cada línea crea un registro e intenta agregarlo al vector. La función de lectura intenta leer todo el archivo o hasta encontrar el primer error. Devuelve un vector con todos los registros creados.
 
 ### Estructura del Programa
 
@@ -113,9 +113,10 @@ El programa está dividido en varios archivos, cada uno con responsabilidades es
 2. **csv.c y csv.h**: Manejan la lectura de archivos CSV.
 3. **hash.c y hash.h**: Implementan la tabla hash.
 4. **pokemon.c y pokemon.h**: Definen las operaciones relacionadas con los Pokémon.
-5. **split.c y split.h**: Proveen funciones para dividir cadenas.
+5. **str_split.c y str_split.h**: Proveen funciones para dividir cadenas.
 6. **tipos.c y tipos.h**: Definen tipos y funciones auxiliares.
-7. **utils.c y utils.h**: Contienen funciones de utilidad para leer diferentes tipos de datos.
+7. **io_utils.c y io_utils.h**: Contienen funciones de utilidad para leer diferentes tipos de datos.
+8. **hash_utils.c y hash_utils.h**: Contienen funciones auxiliares para la tabla de hash.
 
 ### Funcionamiento del Programa
 
@@ -179,7 +180,7 @@ El programa `tp_hash` es una aplicación completa que utiliza una tabla hash par
 
 En el archivo `sarasa.c` la función `funcion1` utiliza `realloc` para agrandar la zona de memoria utilizada para conquistar el mundo. El resultado de `realloc` lo guardo en una variable auxiliar para no perder el puntero original en caso de error:
 
-Una de las funciones mas importantes en esta implementacion de hash es la de `rehash` ya que es la que garanteriza que el `hashmap` se pueda usar con cualquier numero de pares clave valor, toma todas las entradas que hay en la tabla las añade a una nuevo para luego eliminar la vieja, esto garantiza la integradidad de los indices dados por el hash y el correcto funcionamiento de la busqueda de los valores por cada clave.
+Una de las funciones más importantes en esta implementación de hash es la de `rehash` ya que es la que garantiza que el `hashmap` se pueda usar con cualquier número de pares clave-valor. Toma todas las entradas que hay en la tabla, las añade a una nueva y luego elimina la vieja. Esto garantiza la integridad de los índices dados por el hash y el correcto funcionamiento de la búsqueda de los valores por cada clave.
 
 ```c
 static bool hash_rehash(hash_t *hash)
@@ -212,30 +213,92 @@ static bool hash_rehash(hash_t *hash)
 ---
 
 ## Respuestas a las preguntas teóricas
-Incluír acá las respuestas a las preguntas del enunciado (si aplica).
 
-- ### Qué es un diccionario
-  Un diccionario es un tipo de dato abstracto que tiene la funcionalidad de poder asignar un valor a una clave en especifico, con el objetivo de poder encontrar el valor asignado a una clave, dando esta ultima, por lo que se podria definir por:
-    * La habilidad de asignar este valor a la clave y añadiendolo al diccionario
-    * La habilidad de encontrar un valor teniendo una clave
+### Qué es un diccionario
+Un diccionario es un tipo de dato abstracto que permite almacenar pares de clave-valor. Su principal funcionalidad es la de asociar un valor a una clave específica y permitir la recuperación eficiente del valor correspondiente a una clave dada. Las operaciones básicas que soporta un diccionario son:
+- **Insertar**: Añadir un par clave-valor al diccionario.
+- **Buscar**: Recuperar el valor asociado a una clave específica.
+- **Eliminar**: Remover un par clave-valor del diccionario.
 
-- ### Formas de implementar un diccionario
-  * Hashmap: Esta implementacion usa indices dados por una funcion de hasheo para asignar el valor a cada clave
+### Formas de implementar un diccionario
+1. **Hashmap**: Utiliza una función de hash para calcular un índice a partir de la clave, y almacena el valor en la posición correspondiente de una tabla. La función de hash distribuye las claves uniformemente a lo largo de la tabla para minimizar colisiones.
+   - **Ventajas**: Búsqueda, inserción y eliminación en tiempo promedio O(1).
+   - **Desventajas**: Manejo de colisiones y necesidad de una buena función de hash.
 
-  * Vectorial: Cada par clave valor es guardado directamente en un vector sin hacer ningun calculo de hasheo, la busqueda del valor en esta implementacion es O(n) porque es necesario iterar sobre el vector para ver si se encuentra la clave
+2. **Árbol Binario de Búsqueda (BST)**: Almacena los pares clave-valor en un árbol binario de búsqueda, donde cada nodo tiene una clave mayor que todas las claves en su subárbol izquierdo y menor que todas las claves en su subárbol derecho.
+   - **Ventajas**: Búsqueda, inserción y eliminación en tiempo O(log n) en promedio.
+   - **Desventajas**: Claves deben ser comparables y en árbol desbalanceado), las operaciones pueden ser O(n).
 
-- ### Funcion de hash
-  Una funcion de hash es una que asigna un numero u otro identificador , tiene diferentes usos en el tema de la seguridad o en este caso para la facilidad de bajarle la complejidad a una implementacion de TDA (el diccionario), esta funcion tiene que tener la caracteristica:
-  * Dar el mismo resultado para el mismo argumento
-  * Dar resultados aparentemente aleatorios para el argumento
+3. **Lista Enlazada**: Almacena los pares clave-valor en una lista enlazada simple.
+   - **Ventajas**: Implementación sencilla.
+   - **Desventajas**: Búsqueda, inserción y eliminación en tiempo O(n).
 
-- ### Tabla de hash y resolucion de colisiones
-  Una tabla de hash es una estructura que usa una funcion de hasheo para asignar un par clave valor a una tabla, teniendo un comportamento que similar a un vector en complejidad.
-  * Encadenamiento: Es utilizar una estructura de dato alternativa para guardar aquellos pares claves valor que fueron asignados a un mismo indice de hash
-  * Probing: Es asignar todos los elementos del hash en la misma estructura de la tabla, resolviendo colisiones moviendo los elementos al proximo lugar libre.
+### Función de hash
+Una función de hash es una función que toma una entrada (o clave) y devuelve un número entero, que se utiliza como índice en una tabla de hash. Las características que debe tener una buena función de hash son:
+- **Determinística**: La misma entrada siempre debe producir el mismo resultado.
+- **Uniforme**: Debe distribuir las claves uniformemente a lo largo de la tabla para minimizar colisiones.
+- **Eficiente**: Debe ser rápida de calcular.
+- **Minimizar colisiones**: Debe reducir la probabilidad de que dos claves diferentes produzcan el mismo índice.
 
-- ### Importancia tamaño de la tabla (Hash abierto y cerrado)
-  El tamaño de una tabla es importante porque esto tiene que ver directamente con la cantidad de rehash que se tienen que hacer en el programa, y estos rehash son la parte mas costosa en tiempo y computacionalmente, por lo que elegir una cantidad adecuada puede hacer la diferencia en el performance de la aplicacion
+### Tabla de hash y resolución de colisiones
+Una tabla de hash es una estructura de datos que utiliza una función de hash para mapear claves a índices en una tabla. Los métodos de resolución de colisiones incluyen:
 
-- ### Importancia de la capacidad en un Hash abierto
-  En una tabla abierta es realmente importante el tamaño de la tabla, ya que este hara la diferencia en la complejidad de la busqueda, el tener un tabla con un tamaño demasiado pequeño generara que la busqueda no sea O(1) sino que se degrade a O(n), ya que entonces aun con una buena funcion de hash cada estructura de datos encadenada tendra aproximadamente n / k elementos, siendo n el numero de elementos totales y k el la capacidad de la tabla
+1. **Encadenamiento**: Cada posición de la tabla contiene una lista enlazada de todos los pares clave-valor que tienen el mismo índice de hash.
+   - **Ventajas**: Maneja bien las colisiones y permite una tabla de tamaño fijo.
+   - **Desventajas**: Puede degradarse a O(n) en el peor caso si muchas claves colisionan.
+
+2. **Probing Lineal**: Si una posición está ocupada, se busca la siguiente posición libre en la tabla.
+   - **Ventajas**: Simple de implementar.
+   - **Desventajas**: Puede causar clustering, donde muchas claves colisionan y se agrupan.
+
+3. **Probing Cuadrático**: Similar al probing lineal, pero la distancia entre las posiciones probadas aumenta cuadráticamente.
+   - **Ventajas**: Reduce el clustering comparado con el probing lineal.
+   - **Desventajas**: Más complejo de implementar y puede ser menos eficiente en algunos casos.
+
+### Importancia del tamaño de la tabla (Hash abierto y cerrado)
+El tamaño de la tabla es crucial para el rendimiento de una tabla de hash. Un tamaño adecuado minimiza las colisiones y mantiene las operaciones de búsqueda, inserción y eliminación eficientes.
+
+- **Hash Abierto (Encadenamiento)**: Aunque las colisiones se manejan mediante listas enlazadas, un tamaño de tabla pequeño puede llevar a listas largas, degradando la complejidad de las operaciones a O(n/k), donde k es el tamaño de la tabla.
+- **Hash Cerrado (Probing)**: Un tamaño de tabla pequeño puede llevar a muchas colisiones y clustering, degradando la eficiencia de las operaciones.
+
+### Importancia de la capacidad en un Hash abierto
+En una tabla abierta, el tamaño de la tabla sigue siendo importante porque afecta la longitud de las listas enlazadas en cada posición. Si la tabla es demasiado pequeña, las listas se vuelven largas y la complejidad de las operaciones se degrada a O(n/k), donde n es el número de elementos y k es el tamaño de la tabla. Por lo tanto, un tamaño adecuado de la tabla es crucial para mantener la eficiencia.
+
+### Dibujos explicativos
+#### Tabla de Hash con Encadenamiento
+```
+Tabla de Hash:
++---+---+---+---+---+
+| 0 | 1 | 2 | 3 | 4 |
++---+---+---+---+---+
+  |   |   |   |   |
+  v   v   v   v   v
+ [ ] [ ] [ ] [ ] [ ]
+  |   |   |   |   |
+  v   v   v   v   v
+[ ] [ ] [ ] [ ] [ ]
+```
+
+#### Tabla de Hash con Probing Lineal
+```
+Tabla de Hash:
++---+---+---+---+---+
+| 0 | 1 | 2 | 3 | 4 |
++---+---+---+---+---+
+  |   |   |   |   |
+  v   v   v   v   v
+[ ] [ ] [ ] [ ] [ ]
+```
+
+En el caso de una colisión, se busca la siguiente posición libre:
+```
++---+---+---+---+---+
+| 0 | 1 | 2 | 3 | 4 |
++---+---+---+---+---+
+  |   |   |   |   |
+  v   v   v   v   v
+[ ] [X] [ ] [ ] [ ]
+      |
+      v
+    [X]
+```

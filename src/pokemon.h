@@ -2,7 +2,7 @@
 #define POKEMON_H
 
 #include <stdbool.h>
-#include "utils.h"
+#include "io_utils.h"
 #include "csv.h"
 #include "hash.h"
 
