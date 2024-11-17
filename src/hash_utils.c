@@ -1,6 +1,7 @@
 #include "hash.h"
 #include "hash_utils.h"
 
+// algoritmo de DJB2 (Daniel J. Bernstein)
 size_t hasher(const char *str)
 {
 	size_t idx = 5381;
@@ -15,9 +16,13 @@ size_t hasher(const char *str)
 nodo_t *nodo_crear(char *clave, void *valor)
 {
 	nodo_t *nodo = malloc(sizeof(nodo_t));
+	if (!nodo)
+	   return NULL;
 	entrada_t *entrada = malloc(sizeof(entrada_t));
-	if (!nodo || !entrada)
-		return NULL;
+	if (!entrada) {
+        free(nodo);
+        return NULL;
+	}
 	entrada->clave = clave;
 	entrada->valor = valor;
 	nodo->entrada = entrada;

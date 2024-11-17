@@ -34,7 +34,7 @@ bool hash_insertar(hash_t *hash, char *_clave, void *valor, void **encontrado)
 		if (!hash_rehash(hash))
 			return false;
 	}
-
+	// encontrar nodo y actualizar argumento
 	nodo_t *nodo = encontrar_nodo(hash, _clave);
 	if (nodo) {
 		if (encontrado)
@@ -42,15 +42,14 @@ bool hash_insertar(hash_t *hash, char *_clave, void *valor, void **encontrado)
 		nodo->entrada->valor = valor;
 		return true;
 	}
-
 	if (encontrado)
 		*encontrado = NULL;
 
+	// crear clave y agregar
 	char *clave = malloc(strlen(_clave) + 1);
 	if (!clave)
 		return false;
 	strcpy(clave, _clave);
-
 	if (!agregar_entrada(hash, clave, valor)) {
 		free(clave);
 		return false;
@@ -84,12 +83,12 @@ void *hash_quitar(hash_t *hash, char *clave)
 	nodo_t *nodo = encontrar_nodo(hash, clave);
 	if (!nodo)
 		return NULL;
-	if (nodo->ant) {
+	if (nodo->ant) { // no es el primero
 		nodo->ant->sig = nodo->sig;
-	} else {
+	} else { // es el primero
 		hash->tabla[idx] = nodo->sig;
 	}
-	if (nodo->sig) {
+	if (nodo->sig) { // si no es el ultimo
 		nodo->sig->ant = nodo->ant;
 	}
 	void *valor = nodo->entrada->valor;

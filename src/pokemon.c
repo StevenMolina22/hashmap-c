@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "pokemon.h"
 /*
-    NOTA: Las funciones toman void* para poder ser utilizadas con abb_t
+    NOTA: Las funciones toman void* para poder ser utilizadas con hash_t
     😢
 */
 
