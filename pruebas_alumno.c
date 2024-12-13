@@ -530,29 +530,6 @@ void prueba_iterar_hash_vacio()
 	hash_destruir(hash);
 }
 
-void prueba_iterar_corte()
-{
-	hash_t *hash = hash_crear(10);
-	int valor1 = 42;
-	int valor2 = 84;
-	void *encontrado = NULL;
-
-	hash_insertar(hash, "clave1", &valor1, &encontrado);
-	hash_insertar(hash, "clave2", &valor2, &encontrado);
-
-	int contador = 0;
-	size_t iterados = hash_iterar(hash, iterador_prueba_corte, &contador);
-
-	// La iteración se corta después del primer elemento
-	pa2m_afirmar(
-		iterados == 1,
-		"La iteración se corta correctamente después de un elemento");
-	pa2m_afirmar(contador == 1,
-		     "El contador se incrementa correctamente hasta el corte");
-
-	hash_destruir(hash);
-}
-
 void prueba_iterar_elementos_con_duplicados()
 {
 	hash_t *hash = hash_crear(10);
@@ -639,7 +616,6 @@ void prueba_destruir_sin_elementos()
 int main()
 {
 	pa2m_nuevo_grupo("============== Pruebas del Hashmap ===============");
-
 	prueba_crear_hash();
 
 	pa2m_nuevo_grupo("Pruebas de inserción en hash");
@@ -677,7 +653,6 @@ int main()
 	prueba_iterar_elementos();
 	// CASOS BORDE
 	prueba_iterar_hash_vacio();
-	// prueba_iterar_corte();
 	prueba_iterar_elementos_con_duplicados();
 	prueba_iterar_gran_cantidad_elementos();
 

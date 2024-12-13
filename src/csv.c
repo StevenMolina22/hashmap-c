@@ -1,7 +1,7 @@
 #include "csv.h"
 #include <stdio.h>
 #include <string.h>
-#include "split.h"
+#include "str_split.h"
 
 #define MAX_LINEAS 1024
 

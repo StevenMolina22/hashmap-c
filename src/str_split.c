@@ -1,4 +1,4 @@
-#include "split.h"
+#include "str_split.h"
 #include <stdlib.h>
 #include <string.h>
 
