@@ -35,6 +35,5 @@ valgrind-run:
 	@valgrind ./tp_hash pokedex.csv
 	@rm -f ./tp_hash
 
-
 clean:
 	rm -f pruebas_alumno ejemplo
